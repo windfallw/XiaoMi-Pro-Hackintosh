@@ -143,22 +143,22 @@ cd XiaoMi-Pro-Hackintosh
 ```
 Some advanced usages are:
 ```shell
+# Build EFI with Clover and OpenCore bootloaders (1. --BL=CLOVER Only Clover 2. --BL=OC Default, only OpenCore 3. --BL=CLOVEROC Both Clover and OpenCore)
+./makefile.sh --BL=CLOVEROC
 # Build EFI with kexts and OpenCore in Debug version
-./makefile.sh --debug_KextOC
+./makefile.sh --DEBUG_KEXTOC
 # Ignore errors when the script is running
-./makefile.sh --ignore_err
-# Bundled with Chinese verison Docs
-./makefile.sh --lang=zh_CN
-# Generate EFI release for Comet Lake model
-./makefile.sh --model=CML
+./makefile.sh --IGNORE_ERR
+# Bundled with Chinese verison Docs (1. --LANG=en_US Default 2. --LANG=zh_CN Docs in Chinese)
+./makefile.sh --LANG=zh_CN
+# Generate EFI release for both 10th and 8th Gen (1. --MODEL=CML Only 10th Gen 2. --MODEL=KBL Default, only 8th Gen 3. --MODEL=CMLKBL Both 10th and 8th Gen)
+./makefile.sh --MODEL=CMLKBL
 # Preserve work files during the building stage
-./makefile.sh --no_clean_up
+./makefile.sh --NO_CLEAN_UP
 # Use GitHub API
-./makefile.sh --gh_api
-# Build the latest beta EFI with pre-release kexts
-./makefile.sh --pre_release=Kext
-# Build the latest beta EFI with pre-release OpenCore
-./makefile.sh --pre_release=OC
+./makefile.sh --GH_API
+# Build the latest beta EFI with pre-release kexts and OpenCore (1. --PRE_RELEASE=Kext Pre-release kexts 2. --PRE_RELEASE=OC Pre-release OpenCore 3. --PRE_RELEASE=KextOC Both pre-release kexts and OpenCore)
+./makefile.sh --PRE_RELEASE=KextOC
 ```
 
 
@@ -167,7 +167,7 @@ Some advanced usages are:
 - If you are using XiaoMi-Pro with **10th Gen** CPU, then it's a **CML** (Comet Lake) machine.
 -----
 - Download the latest EFI release from the [release page](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/releases) or beta EFI release from artifacts in the [action page](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/actions).
-- Mount EFI partition by running `sudo diskutil list` first to find your EFI partition identifier and then running `sudo diskutil mount diskXsX` (X is your EFI partition identifier)
+- Mount EFI partition by running `sudo diskutil list` first to find your EFI partition identifier and then running `sudo diskutil mount diskXsX` (X is extracted from your EFI partition identifier)
 - A complete replacement of `BOOT` and `OC`(or `CLOVER`) folders is required. Delete these two folders and copy them from the [release pack](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/releases).
 
 
@@ -177,11 +177,13 @@ Some advanced usages are:
 - Change `#enable-backlight-smoother` to `enable-backlight-smoother` in `config.plist` to adjust the panel brightness smoothly
 - Use [xzhih](https://github.com/xzhih)'s [one-key-hidpi](https://github.com/xzhih/one-key-hidpi) to improve quality of system UI
   - Support 1424x802 HiDPI resolution
-  - TM1701: On macOS > 10.13.6, to enable higher HiDPI resolution (<=1520x855), you need to use [DVMT_and_0xE2_fix](BIOS/TM1701/DVMT_and_0xE2_fix) to set DVMT to 64mb
+  - TM1701: On macOS > 10.13.6, to enable higher HiDPI resolution (can not exceed 1520x855), you need to use [DVMT_and_0xE2_fix](BIOS/TM1701/DVMT_and_0xE2_fix) to set DVMT to 64mb
+- Enable `AppleVTD` by patching OEM `DMAR` table according to [How to Fix DMAR Table on macOS | Memory Mapping](https://elitemacx86.com/threads/how-to-fix-dmar-table-on-macos-memory-mapping.964/); user has to update the patching after every BIOS update
 - Add `forceRenderStandby=0` in `config - NVRAM - Add - 7CXXX - boot-args` (OpenCore) or `config - Boot - Arguments` (Clover) if NVMe Kernel Panic CSTS=0xffffffff occurs
 - Use [NVMeFix](https://github.com/acidanthera/NVMeFix) to enable APST on NVMe SSDs
 - TM1701 & TM1707: Use [ALCPlugFix](ALCPlugFix) to fix unworking jack after replug
 - TM1701: Use [DVMT_and_0xE2_fix](BIOS/TM1701/DVMT_and_0xE2_fix) to enable 4K external monitor and more "native" power management
+- TM1905 & TM1963: Change `enable-backlight-registers-fix` to `enable-backlight-registers-alternative-fix` if macOS Version = 13.4
 
 
 ## FAQ
@@ -224,7 +226,7 @@ Open `config.plist` and change value of `LauncherOption` from `Full` to `System`
 
 #### [OC] How to enable startup chime? (TM1701 & TM1707)
 
-Change `#AudioDxe.efi` to `AudioDxe.efi` in `config.plist - UEFI - Drivers`.  
+Enable `AudioDxe.efi` in `config.plist - UEFI - Drivers`.  
 Enable `AudioSupport` in `config.plist - UEFI - Audio`.  
 If you are using macOS Big Sur, go to `SysPref - Sound` and turn on `Play sound on startup`.  
 For macOS version < Big Sur, open `Terminal.app` and run `sudo nvram StartupMute=%00`.

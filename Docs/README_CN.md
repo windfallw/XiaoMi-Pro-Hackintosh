@@ -128,7 +128,7 @@
  
 如果要构建最新测试版EFI，在终端输入以下命令：
 ```shell
-sh -c "$(curl -fsSL https://hackintosh.stevezheng.workers.dev/https://raw.githubusercontent.com/daliansky/XiaoMi-Pro-Hackintosh/main/makefile.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/daliansky/XiaoMi-Pro-Hackintosh/main/makefile.sh)"
 ```
 或者在终端输入以下命令：
 ```shell
@@ -138,22 +138,22 @@ cd XiaoMi-Pro-Hackintosh
 ```
 还有一些进阶用法：
 ```shell
+# 构建EFI时使用 Clover 和 OpenCore 引导（1. --BL=CLOVER 仅 Clover 2. --BL=OC 默认，仅 OpenCore 3. --BL=CLOVEROC 同时 Clover 和 OpenCore）
+./makefile.sh --BL=CLOVEROC
 # 构建EFI时使用 Debug 版 kexts 和 OpenCore
-./makefile.sh --debug_KextOC
+./makefile.sh --DEBUG_KEXTOC
 # 忽略脚本运行时遇到的错误
-./makefile.sh --ignore_err
-# 使用中文版文档
-./makefile.sh --lang=zh_CN
-# 生成 Comet Lake 机型的 EFI包
-./makefile.sh --model=CML
+./makefile.sh --IGNORE_ERR
+# 使用中文版文档（1. --LANG=en_US 默认 2. --LANG=zh_CN 中文版文档）
+./makefile.sh --LANG=zh_CN
+# 同时生成第10代和第8代机型的EFI包（1. --MODEL=CML 仅第10代 2. --MODEL=KBL 默认，仅第8代 3. --MODEL=CMLKBL 同时第10代和第8代）
+./makefile.sh --MODEL=CMLKBL
 # 构建时保留工程文件
-./makefile.sh --no_clean_up
+./makefile.sh --NO_CLEAN_UP
 # 使用 GitHub API
-./makefile.sh --gh_api
-# 构建包含最新 pre-release 驱动的测试版EFI
-./makefile.sh --pre_release=Kext
-# 构建包含最新 pre-release OpenCore 的测试版EFI
-./makefile.sh --pre_release=OC
+./makefile.sh --GH_API
+# 构建包含最新 pre-release 驱动和 OpenCore 的测试版EFI（1. --PRE_RELEASE=Kext Pre-release 驱动 2. --PRE_RELEASE=OC Pre-release OpenCore 3. --PRE_RELEASE=KextOC 同时 pre-release 驱动和 OpenCore）
+./makefile.sh --PRE_RELEASE=KextOC
 ```
 
 
@@ -162,7 +162,7 @@ cd XiaoMi-Pro-Hackintosh
 - 如果你的机子是 小米笔记本Pro **10代** CPU，记为 **CML**（Comet Lake）机器。
 -----
 - 在 [release page](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/releases) 里下载最新 EFI release，或从 [action page](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/actions) 的 Artifacts 里下载最新测试版 EFI release。
-- 挂载 EFI 分区，首先运行命令 `sudo diskutil list` 来找到 EFI 分区所在的分区标号，然后运行命令 `sudo diskutil mount diskXsX`（X 是你的 EFI 分区标号）
+- 挂载 EFI 分区，首先运行命令 `sudo diskutil list` 来找到 EFI 分区所在的分区标号，然后运行命令 `sudo diskutil mount diskXsX`（X 取自你的 EFI 分区标号）
 - 完整替换 `BOOT` 和 `OC`(或 `CLOVER`)文件夹。首先删除他们，然后从 [release 包里](https://github.com/daliansky/XiaoMi-Pro-Hackintosh/releases)拷贝新的。
 
 
@@ -172,11 +172,13 @@ cd XiaoMi-Pro-Hackintosh
 - 更改 `config.plist` 中的 `#enable-backlight-smoother` 为 `enable-backlight-smoother` 使亮度调节变得更丝滑
 - 使用 [xzhih](https://github.com/xzhih) 的 [one-key-hidpi](https://github.com/xzhih/one-key-hidpi) 来提升系统 UI 质量
   - 支持 1424x802 HiDPI 分辨率
-  - TM1701：如果 macOS 版本高于 10.13.6，要开启更高 HiDPI 分辨率 (<1520x855)，请先使用 [DVMT_and_0xE2_fix](../BIOS/TM1701/DVMT_and_0xE2_fix) 来把动态显存设为64mb
+  - TM1701：如果 macOS 版本高于 10.13.6，要开启更高 HiDPI 分辨率 (不能超过 1520x855)，请先使用 [DVMT_and_0xE2_fix](../BIOS/TM1701/DVMT_and_0xE2_fix) 来把动态显存设为64mb
+- 开启 `AppleVTD` 通过修改 OEM `DMAR` 表，参考 [How to Fix DMAR Table on macOS | Memory Mapping](https://elitemacx86.com/threads/how-to-fix-dmar-table-on-macos-memory-mapping.964/)；经测试每次升级 BIOS 后须重新定制
 - 添加 `forceRenderStandby=0` 到 `config - NVRAM - Add - 7CXXX - boot-args` (OpenCore) 或 `config - Boot - Arguments` (Clover) 如果出现 NVMe Kernel Panic CSTS=0xffffffff
 - 使用 [NVMeFix](https://github.com/acidanthera/NVMeFix) 来开启 NVMe SSDs 的 APST
 - TM1701 和 TM1707：使用 [ALCPlugFix](../ALCPlugFix) 来修复耳机重新插拔后无声
 - TM1701：使用 [DVMT_and_0xE2_fix](../BIOS/TM1701/DVMT_and_0xE2_fix) 来开启 4K 外接显示屏并获得更加“原生”的电源管理
+- TM1905 和 TM1963：如果 macOS 版本等于 13.4，更改 `enable-backlight-registers-fix` 为 `enable-backlight-registers-alternative-fix`
 
 
 ## 常见问题解答
@@ -219,7 +221,7 @@ cd XiaoMi-Pro-Hackintosh
 
 #### [OC] 怎么开启启动音？（TM1701 & TM1707）
 
-修改 `config.plist - UEFI - Drivers` 中的 `#AudioDxe.efi` 为 `AudioDxe.efi`。  
+开启 `config.plist - UEFI - Drivers` 中的 `AudioDxe.efi`。  
 开启 `config.plist - UEFI - Audio` 中的 `AudioSupport`。  
 如果你在使用 macOS Big Sur，请前往 `系统偏好设置 - 声音` 并勾选 `启动时播放声音`。  
 如果在使用低于 Big Sur 的 macOS 版本，请打开 `终端.app` 并运行 `sudo nvram StartupMute=%00`。

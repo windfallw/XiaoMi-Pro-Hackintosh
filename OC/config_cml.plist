@@ -32,19 +32,11 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>Add DMAC device</string>
+				<string>Add EC and USBX devices</string>
 				<key>Enabled</key>
 				<true/>
 				<key>Path</key>
-				<string>SSDT-DMAC.aml</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>Add EC device</string>
-				<key>Enabled</key>
-				<true/>
-				<key>Path</key>
-				<string>SSDT-EC.aml</string>
+				<string>SSDT-EC-USBX.aml</string>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -88,6 +80,14 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
+				<string>Inject plugin-type=1</string>
+				<key>Enabled</key>
+				<true/>
+				<key>Path</key>
+				<string>SSDT-PLUG.aml</string>
+			</dict>
+			<dict>
+				<key>Comment</key>
 				<string>Add PMCR device for Intel 300-series</string>
 				<key>Enabled</key>
 				<true/>
@@ -128,7 +128,7 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>USB power injection and customization, pair with SSDT-EC and _UPC rename (Native Bluetooth)</string>
+				<string>USB ports customization, pair with _UPC rename (Native Bluetooth)</string>
 				<key>Enabled</key>
 				<true/>
 				<key>Path</key>
@@ -136,7 +136,7 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>USB power injection and customization, pair with SSDT-EC and _UPC rename (Disable native Bluetooth)</string>
+				<string>USB ports customization, pair with _UPC rename (Disable native Bluetooth)</string>
 				<key>Enabled</key>
 				<false/>
 				<key>Path</key>
@@ -144,19 +144,11 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>USB power injection and customization, pair with SSDT-EC and _UPC rename (Fingerprint Bluetooth)</string>
+				<string>USB ports customization, pair with _UPC rename (Fingerprint Bluetooth)</string>
 				<key>Enabled</key>
 				<false/>
 				<key>Path</key>
 				<string>SSDT-USB-FingerBT.aml</string>
-			</dict>
-			<dict>
-				<key>Comment</key>
-				<string>Inject plugin-type=1</string>
-				<key>Enabled</key>
-				<true/>
-				<key>Path</key>
-				<string>SSDT-XCPM.aml</string>
 			</dict>
 		</array>
 		<key>Delete</key>
@@ -293,6 +285,8 @@
 			<key>EnableSafeModeSlide</key>
 			<false/>
 			<key>EnableWriteUnprotector</key>
+			<false/>
+			<key>FixupAppleEfiImages</key>
 			<false/>
 			<key>ForceBooterSignature</key>
 			<false/>
@@ -471,9 +465,9 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/Lilu</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
-				<string>10.0.0</string>
+				<string>8.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -489,9 +483,9 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/VirtualSMC</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
-				<string>10.0.0</string>
+				<string>8.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -527,7 +521,7 @@
 				<key>MaxKernel</key>
 				<string></string>
 				<key>MinKernel</key>
-				<string>10.0.0</string>
+				<string>8.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -561,7 +555,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/WhateverGreen</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
 				<string>10.0.0</string>
 				<key>PlistPath</key>
@@ -579,9 +573,9 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AppleALC</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
-				<string>10.0.0</string>
+				<string>8.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -597,9 +591,9 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/HibernationFixup</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
-				<string>14.0.0</string>
+				<string>12.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -611,11 +605,11 @@
 				<key>Comment</key>
 				<string>NVMe patches</string>
 				<key>Enabled</key>
-				<true/>
+				<false/>
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/NVMeFix</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
 				<string>18.0.0</string>
 				<key>PlistPath</key>
@@ -633,7 +627,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/RestrictEvents</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
 				<string>12.0.0</string>
 				<key>PlistPath</key>
@@ -651,7 +645,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/NoTouchID</string>
 				<key>MaxKernel</key>
-				<string>19.99.99</string>
+				<string>19.9.9</string>
 				<key>MinKernel</key>
 				<string>17.5.0</string>
 				<key>PlistPath</key>
@@ -671,7 +665,7 @@
 				<key>MaxKernel</key>
 				<string></string>
 				<key>MinKernel</key>
-				<string>10.0</string>
+				<string>10.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -813,7 +807,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/RealtekCardReaderFriend</string>
 				<key>MaxKernel</key>
-				<string>20.99.99</string>
+				<string>20.9.9</string>
 				<key>MinKernel</key>
 				<string>18.0.0</string>
 				<key>PlistPath</key>
@@ -831,7 +825,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/RealtekCardReader</string>
 				<key>MaxKernel</key>
-				<string>20.99.99</string>
+				<string>20.9.9</string>
 				<key>MinKernel</key>
 				<string>18.0.0</string>
 				<key>PlistPath</key>
@@ -849,7 +843,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AirportItlwm</string>
 				<key>MaxKernel</key>
-				<string>20.99.99</string>
+				<string>20.9.9</string>
 				<key>MinKernel</key>
 				<string>20.0.0</string>
 				<key>PlistPath</key>
@@ -867,7 +861,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AirportItlwm</string>
 				<key>MaxKernel</key>
-				<string>19.99.99</string>
+				<string>19.9.9</string>
 				<key>MinKernel</key>
 				<string>19.0.0</string>
 				<key>PlistPath</key>
@@ -885,9 +879,27 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AirportItlwm</string>
 				<key>MaxKernel</key>
-				<string>21.99.99</string>
+				<string>21.9.9</string>
 				<key>MinKernel</key>
 				<string>21.0.0</string>
+				<key>PlistPath</key>
+				<string>Contents/Info.plist</string>
+			</dict>
+			<dict>
+				<key>Arch</key>
+				<string>x86_64</string>
+				<key>BundlePath</key>
+				<string>AirportItlwm_Sonoma.kext</string>
+				<key>Comment</key>
+				<string>Intel Wi-Fi driver on Sonoma</string>
+				<key>Enabled</key>
+				<true/>
+				<key>ExecutablePath</key>
+				<string>Contents/MacOS/AirportItlwm</string>
+				<key>MaxKernel</key>
+				<string>23.9.9</string>
+				<key>MinKernel</key>
+				<string>23.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -903,7 +915,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AirportItlwm</string>
 				<key>MaxKernel</key>
-				<string>22.99.99</string>
+				<string>22.9.9</string>
 				<key>MinKernel</key>
 				<string>22.0.0</string>
 				<key>PlistPath</key>
@@ -939,7 +951,7 @@
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/IntelBTPatcher</string>
 				<key>MaxKernel</key>
-				<string></string>
+				<string>23.9.9</string>
 				<key>MinKernel</key>
 				<string>16.0.0</string>
 				<key>PlistPath</key>
@@ -975,7 +987,7 @@
 				<key>ExecutablePath</key>
 				<string></string>
 				<key>MaxKernel</key>
-				<string>20.99.99</string>
+				<string>20.9.9</string>
 				<key>MinKernel</key>
 				<string>16.0.0</string>
 				<key>PlistPath</key>
@@ -1069,6 +1081,8 @@
 			<true/>
 			<key>DisableIoMapper</key>
 			<true/>
+			<key>DisableIoMapperMapping</key>
+			<false/>
 			<key>DisableLinkeditJettison</key>
 			<true/>
 			<key>DisableRtcChecksum</key>
@@ -1126,6 +1140,8 @@
 			<false/>
 			<key>HideAuxiliary</key>
 			<true/>
+			<key>InstanceIdentifier</key>
+			<string></string>
 			<key>LauncherOption</key>
 			<string>Full</string>
 			<key>LauncherPath</key>
@@ -1481,18 +1497,24 @@
 		<dict>
 			<key>ClearScreenOnModeSwitch</key>
 			<false/>
+			<key>ConsoleFont</key>
+			<string></string>
 			<key>ConsoleMode</key>
 			<string></string>
 			<key>DirectGopRendering</key>
 			<false/>
 			<key>ForceResolution</key>
 			<false/>
+			<key>GopBurstMode</key>
+			<false/>
 			<key>GopPassThrough</key>
 			<string>Disabled</string>
 			<key>IgnoreTextInGraphics</key>
 			<false/>
+			<key>InitialMode</key>
+			<string>Auto</string>
 			<key>ProvideConsoleGop</key>
-			<true/>
+			<false/>
 			<key>ReconnectGraphicsOnConnect</key>
 			<false/>
 			<key>ReconnectOnResChange</key>
@@ -1546,6 +1568,8 @@
 			<false/>
 			<key>OSInfo</key>
 			<false/>
+			<key>PciIo</key>
+			<false/>
 			<key>UnicodeCollation</key>
 			<false/>
 		</dict>
@@ -1575,6 +1599,10 @@
 			<true/>
 			<key>ResizeGpuBars</key>
 			<integer>-1</integer>
+			<key>ResizeUsePciRbIo</key>
+			<false/>
+			<key>ShimRetainProtocol</key>
+			<false/>
 			<key>TscSyncTimeout</key>
 			<integer>0</integer>
 			<key>UnblockFsConnect</key>

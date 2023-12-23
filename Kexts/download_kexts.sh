@@ -10,14 +10,12 @@
 
 # Vars
 ACDT="Acidanthera"
-CFURL="https://hackintosh.stevezheng.workers.dev"
 FRWF="0xFireWolf"
 OIW="OpenIntelWireless"
 RETRY_MAX=5
 
 download_mode="RELEASE"
 gh_api=false
-systemLanguage=$(locale | grep LANG | sed s/'LANG='// | tr -d '"' | cut -d "." -f 1)
 
 # Colors
 black=$(tput setaf 0)
@@ -51,6 +49,14 @@ function copyErr() {
 }
 
 function init() {
+  local dirs=(
+    "Big Sur"
+    "Catalina"
+    "Monterey"
+    "Sonoma"
+    "Ventura"
+  )
+
   if [[ ${OSTYPE} != darwin* ]]; then
     echo "This script can only run in macOS, aborting"
     exit 1
@@ -66,6 +72,10 @@ function init() {
     rm -rf "${OUTDir_TMP}"
   fi
   mkdir "${OUTDir_TMP}" || exit 1
+
+  for dir in "${dirs[@]}"; do
+    mkdir -p "${OUTDir_TMP}/${dir}" || exit 1
+  done
 }
 
 # Workaround for Release Binaries that don't include "RELEASE" in their file names (head or grep)
@@ -80,6 +90,7 @@ function h_or_g() {
     hgs=( "grep -m 1 BigSur"
           "grep -m 1 Catalina"
           "grep -m 1 Monterey"
+          "grep -m 1 Sonoma"
           "grep -m 1 Ventura"
         )
   elif [[ "$1" == "NoTouchID" ]]; then
@@ -113,24 +124,14 @@ function dGR() {
   if [[ -n ${GITHUB_ACTIONS+x} || ${gh_api} == false ]]; then
     rawURL="https://github.com/$1/$2/releases$tag"
     for hg in "${hgs[@]}"; do
-      if [[ ${systemLanguage} == "zh_CN" ]]; then
-        rawURL=${rawURL/#/${CFURL}/}
-      fi
       rawURL=$(curl -Ls -o /dev/null -w "%{url_effective}" "${rawURL}" | sed 's/releases\/tag/releases\/expanded_assets/')
       urls+=( "https://github.com$(curl -L --silent "${rawURL}" | grep '/download/' | eval "${hg}" | sed 's/^[^"]*"\([^"]*\)".*/\1/')" )
     done
   else
     rawURL="https://api.github.com/repos/$1/$2/releases$tag"
     for hg in "${hgs[@]}"; do
-      if [[ ${systemLanguage} == "zh_CN" ]]; then
-        rawURL=${rawURL/#/${CFURL}/}
-      fi
       urls+=( "$(curl --silent "${rawURL}" | grep 'browser_download_url' | eval "${hg}" | tr -d '"' | tr -d ' ' | sed -e 's/browser_download_url://')" )
     done
-  fi
-
-  if [[ ${systemLanguage} == "zh_CN" ]]; then
-    urls=("${urls[@]/#/${CFURL}/}")
   fi
 
   for url in "${urls[@]}"; do
@@ -149,9 +150,6 @@ function dGR() {
 # Download GitHub Source Code
 function dGS() {
   local url="https://github.com/$1/$2/archive/master.zip"
-  if [[ ${systemLanguage} == "zh_CN" ]]; then
-    url=${url/#/${CFURL}/}
-  fi
   echo "${green}[${reset}${blue}${bold} Downloading $2.zip ${reset}${green}]${reset}"
   echo "${cyan}"
   cd ./"$3" || exit 1
@@ -197,7 +195,6 @@ function download() {
     AppleALC
     HibernationFixup
     RestrictEvents
-    NVMeFix
     VoodooPS2
     BrcmPatchRAM
     Lilu
@@ -237,6 +234,13 @@ function download() {
 # Unpack
 function unpack() {
   echo "${green}[${reset}${yellow}${bold} Unpacking ${reset}${green}]${reset}"
+  # Unzip non-standard AirportItlwm release packages
+  (cd "${OUTDir_TMP}" && unzip -qq -d "Big Sur" "*BigSur*.zip" && rm -- *BigSur*.zip || echo "${yellow}[${bold} WARNING ${reset}${yellow}]${reset}: AirportItlwm has non-standard packages location!")
+  (cd "${OUTDir_TMP}" && unzip -qq -d "Catalina" "*Catalina*.zip" && rm -- *Catalina*.zip || echo "${yellow}[${bold} WARNING ${reset}${yellow}]${reset}: AirportItlwm has non-standard packages location!")
+  (cd "${OUTDir_TMP}" && unzip -qq -d "Monterey" "*Monterey*.zip" && rm -- *Monterey*.zip || echo "${yellow}[${bold} WARNING ${reset}${yellow}]${reset}: AirportItlwm has non-standard packages location!")
+  (cd "${OUTDir_TMP}" && unzip -qq -d "Sonoma" "*Sonoma*.zip" && rm -- *Sonoma*.zip || echo "${yellow}[${bold} WARNING ${reset}${yellow}]${reset}: AirportItlwm has non-standard packages location!")
+  (cd "${OUTDir_TMP}" && unzip -qq -d "Ventura" "*Ventura*.zip" && rm -- *Ventura*.zip || echo "${yellow}[${bold} WARNING ${reset}${yellow}]${reset}: AirportItlwm has non-standard packages location!")
+
   eval "$(cd ${OUTDir_TMP} && unzip -qq "*.zip" || exit 1)"
   echo
 }
@@ -268,6 +272,7 @@ function patch() {
   mv "${OUTDir_TMP}/Big Sur/AirportItlwm.kext" "${OUTDir_TMP}/Big Sur/AirportItlwm_Big_Sur.kext" || exit 1
   mv "${OUTDir_TMP}/Catalina/AirportItlwm.kext" "${OUTDir_TMP}/Catalina/AirportItlwm_Catalina.kext" || exit 1
   mv "${OUTDir_TMP}/Monterey/AirportItlwm.kext" "${OUTDir_TMP}/Monterey/AirportItlwm_Monterey.kext" || exit 1
+  mv "${OUTDir_TMP}/Sonoma/AirportItlwm.kext" "${OUTDir_TMP}/Sonoma/AirportItlwm_Sonoma.kext" || exit 1
   mv "${OUTDir_TMP}/Ventura/AirportItlwm.kext" "${OUTDir_TMP}/Ventura/AirportItlwm_Ventura.kext" || exit 1
 }
 
@@ -286,7 +291,6 @@ function install() {
     "Kexts/SMCProcessor.kext"
     "Kexts/VirtualSMC.kext"
     "Lilu.kext"
-    "NVMeFix.kext"
     "NoTouchID.kext"
   # "RealtekCardReader.kext"
   # "RealtekCardReaderFriend.kext"
@@ -299,6 +303,7 @@ function install() {
     "Big Sur/AirportItlwm_Big_Sur.kext"
     "Catalina/AirportItlwm_Catalina.kext"
     "Monterey/AirportItlwm_Monterey.kext"
+    "Sonoma/AirportItlwm_Sonoma.kext"
     "Ventura/AirportItlwm_Ventura.kext"
   )
 
